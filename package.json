@@ -12,7 +12,7 @@
     "start": "node dist/index.js"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^0.1.0",
+    "@modelcontextprotocol/sdk": "^1.12.1",
     "diff": "^5.1.0",
     "minimatch": "^9.0.3",
     "zod": "^3.22.4",
