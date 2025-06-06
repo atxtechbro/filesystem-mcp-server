@@ -103,10 +103,7 @@ const ReadMultipleFilesArgsSchema = z.object({
   paths: z.array(z.string()),
 });
 
-const WriteFileArgsSchema = z.object({
-  path: z.string(),
-  content: z.string(),
-});
+
 
 const EditOperation = z.object({
   oldText: z.string().describe('Text to search for - must match exactly'),
@@ -353,15 +350,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           "the entire operation. Only works within allowed directories.",
         inputSchema: zodToJsonSchema(ReadMultipleFilesArgsSchema) as ToolInput,
       },
-      {
-        name: "write_file",
-        description:
-          "CAUTION: Creates a new file or completely overwrites an existing file. " +
-          "Consider using other tools like fs_read and fs_write instead for better " +
-          "visibility of changes. This tool provides no diff view and will silently " +
-          "overwrite existing content. Only works within allowed directories.",
-        inputSchema: zodToJsonSchema(WriteFileArgsSchema) as ToolInput,
-      },
+
       {
         name: "edit_file",
         description:
@@ -481,17 +470,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         };
       }
 
-      case "write_file": {
-        const parsed = WriteFileArgsSchema.safeParse(args);
-        if (!parsed.success) {
-          throw new Error(`Invalid arguments for write_file: ${parsed.error}`);
-        }
-        const validPath = await validatePath(parsed.data.path);
-        await fs.writeFile(validPath, parsed.data.content, "utf-8");
-        return {
-          content: [{ type: "text", text: `Successfully wrote to ${parsed.data.path}` }],
-        };
-      }
+
 
       case "edit_file": {
         const parsed = EditFileArgsSchema.safeParse(args);
